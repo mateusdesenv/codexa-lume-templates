@@ -23,26 +23,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // Mobile menu
     // ==========================================
+    function setMenuOpen(isOpen) {
+        menuToggle.classList.toggle('active', isOpen);
+        nav.classList.toggle('active', isOpen);
+        menuToggle.setAttribute('aria-expanded', String(isOpen));
+        menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
     menuToggle.addEventListener('click', () => {
-        menuToggle.classList.toggle('active');
-        nav.classList.toggle('active');
-        document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+        setMenuOpen(!nav.classList.contains('active'));
     });
 
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            nav.classList.remove('active');
-            document.body.style.overflow = '';
+            setMenuOpen(false);
         });
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && nav.classList.contains('active')) {
+            setMenuOpen(false);
+            menuToggle.focus();
+        }
     });
 
     // Close mobile menu on resize above breakpoint
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
-            menuToggle.classList.remove('active');
-            nav.classList.remove('active');
-            document.body.style.overflow = '';
+            setMenuOpen(false);
         }
     });
 
