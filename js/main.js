@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.getElementById('header');
     const menuToggle = document.getElementById('menuToggle');
     const nav = document.getElementById('nav');
-    const navLinks = nav.querySelectorAll('.nav__link');
+    const navLinks = nav.querySelectorAll('a.nav__link, .nav__submenu-link');
+    const treatmentsDropdown = nav.querySelector('.nav__item--dropdown');
+    const treatmentsToggle = nav.querySelector('.nav__dropdown-toggle');
     const form = document.getElementById('contatoForm');
     const telefoneInput = document.getElementById('telefone');
 
@@ -29,22 +31,60 @@ document.addEventListener('DOMContentLoaded', () => {
         menuToggle.setAttribute('aria-expanded', String(isOpen));
         menuToggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
         document.body.style.overflow = isOpen ? 'hidden' : '';
+
+        if (!isOpen) {
+            setTreatmentsOpen(false);
+        }
     }
 
     menuToggle.addEventListener('click', () => {
         setMenuOpen(!nav.classList.contains('active'));
     });
 
+    function setTreatmentsOpen(isOpen) {
+        treatmentsDropdown.classList.toggle('is-open', isOpen);
+        treatmentsDropdown.classList.toggle('is-closed', !isOpen);
+        treatmentsToggle.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    treatmentsToggle.addEventListener('click', () => {
+        setTreatmentsOpen(!treatmentsDropdown.classList.contains('is-open'));
+    });
+
+    if (window.matchMedia('(hover: hover)').matches) {
+        treatmentsDropdown.addEventListener('mouseenter', () => {
+            treatmentsDropdown.classList.remove('is-closed');
+            treatmentsToggle.setAttribute('aria-expanded', 'true');
+        });
+        treatmentsDropdown.addEventListener('mouseleave', () => setTreatmentsOpen(false));
+    }
+
+    treatmentsDropdown.addEventListener('focusin', () => {
+        treatmentsDropdown.classList.remove('is-closed');
+        treatmentsToggle.setAttribute('aria-expanded', 'true');
+    });
+    treatmentsDropdown.addEventListener('focusout', (event) => {
+        if (!treatmentsDropdown.contains(event.relatedTarget)) {
+            setTreatmentsOpen(false);
+        }
+    });
+
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
+            setTreatmentsOpen(false);
             setMenuOpen(false);
         });
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && nav.classList.contains('active')) {
-            setMenuOpen(false);
-            menuToggle.focus();
+        if (event.key === 'Escape') {
+            if (treatmentsDropdown.classList.contains('is-open')) {
+                setTreatmentsOpen(false);
+                treatmentsToggle.focus();
+            } else if (nav.classList.contains('active')) {
+                setMenuOpen(false);
+                menuToggle.focus();
+            }
         }
     });
 
@@ -52,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
             setMenuOpen(false);
+            setTreatmentsOpen(false);
         }
     });
 
