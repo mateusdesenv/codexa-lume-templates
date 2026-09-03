@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // Phone mask
     // ==========================================
+    if (telefoneInput && form) {
     telefoneInput.addEventListener('input', (e) => {
         let value = e.target.value.replace(/\D/g, '');
 
@@ -207,11 +208,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (firstInvalid) firstInvalid.el.focus();
         }
     });
+    }
 
     // ==========================================
     // Reveal on scroll
     // ==========================================
-    const revealElements = document.querySelectorAll('.experience-card, .plan__content, .plan__visual, .experts__content, .experts__visual, .contact__box');
+    const revealElements = document.querySelectorAll('.experience-card, .plan__content, .plan__visual, .experts__content, .experts__visual, .contact__box, .procedure-card, .procedure-overview__content, .procedure-overview__facts');
 
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
